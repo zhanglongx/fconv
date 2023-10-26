@@ -5,6 +5,8 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"unicode"
+	"unicode/utf8"
 
 	"github.com/saintfish/chardet"
 	"golang.org/x/text/encoding/simplifiedchinese"
@@ -100,24 +102,9 @@ func (f *Fconv) ConvertFile(path string) (Result, error) {
 		content = content[3:]
 	}
 
-	possible, err := chardet.NewTextDetector().DetectAll(content)
+	encoding, err := detectEncoding(content)
 	if err != nil {
 		return Result{}, err
-	}
-
-	var encoding string
-	for _, p := range possible {
-		if p.Charset == "Shift_JIS" || p.Charset == "GB-18030" {
-			encoding = "GB-18030"
-			break
-		} else if p.Charset == "UTF-8" {
-			encoding = "UTF-8"
-			break
-		}
-	}
-
-	if encoding == "" {
-		return Result{}, fmt.Errorf("unknown encoding: %v", possible)
 	}
 
 	format := detectFormat(content)
@@ -169,6 +156,46 @@ func (f *Fconv) ConvertFile(path string) (Result, error) {
 		Encoding: [2]string{encoding, toEncoding},
 		Format:   [2]int{format, toFormat},
 	}, nil
+}
+
+func detectEncoding(content []byte) (string, error) {
+	possible, err := chardet.NewTextDetector().DetectAll(content)
+	if err != nil {
+		return "", err
+	}
+
+	var encoding string
+	for _, p := range possible {
+		if p.Charset == "Shift_JIS" || p.Charset == "GB-18030" {
+			encoding = "GB-18030"
+			break
+		} else if p.Charset == "UTF-8" {
+			encoding = "UTF-8"
+			break
+		}
+	}
+
+	if encoding == "" {
+		return encoding, fmt.Errorf("unknown encoding: %v", possible)
+	}
+
+	if encoding == "UTF-8" {
+		for len(content) > 0 {
+			r, size := utf8.DecodeRune(content)
+
+			content = content[size:]
+
+			if r < 0x80 {
+				continue
+			}
+
+			if !unicode.Is(unicode.Han, r) {
+				return "", fmt.Errorf("may contain non-chinese characters")
+			}
+		}
+	}
+
+	return encoding, nil
 }
 
 func detectFormat(content []byte) int {
