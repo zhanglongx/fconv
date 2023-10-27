@@ -6,8 +6,6 @@ fconv can detect the encoding and format of a file and convert it manually or au
 
 In manual mode, you can specify whether the desired file converted mode is Windows mode or Unix mode. In automatic mode, the conversion between Windows mode and Unix mode is done automatically.
 
-
-
 ⚠️ fconv is designed for GB-10830 and UTF-8, and it is not recommended to use it for other encodings.
 
 ⚠️ file encoding conversion can be a very dangerous operation sometimes, and leading to the lose of data. So you are responsible for your own actions.
@@ -34,7 +32,7 @@ In manual mode, you can specify whether the desired file converted mode is Windo
 
 - fconv only supports GB-10830 and utf-8 encoded file conversion. So, if a file is utf-8 encoded and contains characters other than ASCII characters and Chinese simplified characters, fconv will usually refuse to convert it. 
 
-- Due to the GB-18030 encoding method, the encoding of Emoji characters is not supported. Therefore, if a file is UTF-8 encoded but contains Emoji characters, then fconv will also refuse to convert it.
+- Since Windows mode, the file generally works under the CP936, which does not support Emoji. So if a UTF-8 encoded file contains Emoji characters, fconv will also refuse to do the conversion.
 
 ## Credits
 
