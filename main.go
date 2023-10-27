@@ -189,6 +189,7 @@ func detectEncoding(content []byte) (string, error) {
 				continue
 			}
 
+			// FIXME: not accurate
 			if !unicode.Is(unicode.Han, r) {
 				return "", fmt.Errorf("may contain non-chinese characters")
 			}
