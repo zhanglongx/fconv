@@ -35,3 +35,9 @@ In manual mode, you can specify whether the desired file converted mode is Windo
 - fconv only supports GB-10830 and utf-8 encoded file conversion. So, if a file is utf-8 encoded and contains characters other than ASCII characters and Chinese simplified characters, fconv will usually refuse to convert it. 
 
 - Due to the GB-18030 encoding method, the encoding of Emoji characters is not supported. Therefore, if a file is UTF-8 encoded but contains Emoji characters, then fconv will also refuse to convert it.
+
+## Credits
+
+See go.mod file.
+
+Use of these libraries is subject to their respective licenses.
