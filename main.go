@@ -14,7 +14,7 @@ import (
 )
 
 const (
-	VERSION = "1.0.0"
+	VERSION = "1.0.1"
 )
 
 const (
@@ -164,18 +164,22 @@ func detectEncoding(content []byte) (string, error) {
 		return "", err
 	}
 
-	var encoding string
-	for _, p := range possible {
-		if p.Charset == "Shift_JIS" || p.Charset == "GB-18030" {
-			encoding = "GB-18030"
-			break
-		} else if p.Charset == "UTF-8" {
-			encoding = "UTF-8"
-			break
+	isEncoding := func(e string) bool {
+		for _, p := range possible {
+			if p.Charset == e {
+				return true
+			}
 		}
+		return false
 	}
 
-	if encoding == "" {
+	var encoding string
+	if isEncoding("UTF-8") {
+		// XXX: may contain ASCII
+		encoding = "UTF-8"
+	} else if isEncoding("GB-18030") {
+		encoding = "GB-18030"
+	} else {
 		return encoding, fmt.Errorf("unknown encoding: %v", possible)
 	}
 
@@ -205,7 +209,8 @@ func detectFormat(content []byte) int {
 	} else if bytes.Contains(content, []byte("\n")) {
 		return UNIXFORMAT
 	} else {
-		return INVALIDFORMAT
+		// XXX: no newline, assume UNIX format
+		return UNIXFORMAT
 	}
 }
 

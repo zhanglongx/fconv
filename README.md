@@ -36,6 +36,8 @@ fconv has two "conversion modes": manual and automatic. In manual mode, the user
 
 - Since Windows mode, the file generally created under CP936 (GB-2312 encoding), which does not support Emoji. So if a UTF-8 encoded file contains Emoji characters, fconv will also refuse to conversion it.
 
+- Some boundary rules: If file doesn't contain multi-bytes characters at all (e.g plain ASCII), fconv will think it as UTF-8 encoding. If file doesn't contain LF, fconv will think it as UNIX format.
+
 ## Credits
 
 See go.mod file.
